@@ -8,13 +8,13 @@
 #include "../../src/parser/Lexer.h"
 #include <algorithm>
 
-TEST(ScannerTest, HandleEmptyStream) {
+TEST(LexerTest, HandleEmptyStream) {
     const std::string input;
     const auto result = Lexer(input).lex();
     EXPECT_EQ(0, result.size());
 }
 
-TEST(ScannerTest, HandleBinaryPlusOp) {
+TEST(LexerTest, HandleBinaryPlusOp) {
     const std::string input = "1 + 1";
 
     const auto result = Lexer(input).lex();
@@ -31,7 +31,7 @@ TEST(ScannerTest, HandleBinaryPlusOp) {
     ));
 }
 
-TEST(ScannerTest, HandleBinaryMinusOp) {
+TEST(LexerTest, HandleBinaryMinusOp) {
     const std::string input = "1 - 1";
 
     const auto result = Lexer(input).lex();
@@ -48,7 +48,7 @@ TEST(ScannerTest, HandleBinaryMinusOp) {
     ));
 }
 
-TEST(ScannerTest, HandleBinaryStarOp) {
+TEST(LexerTest, HandleBinaryStarOp) {
     const std::string input = "1 * 1";
 
     const auto result = Lexer(input).lex();
@@ -65,7 +65,7 @@ TEST(ScannerTest, HandleBinaryStarOp) {
     ));
 }
 
-TEST(ScannerTest, HandleBinarySlashOp) {
+TEST(LexerTest, HandleBinarySlashOp) {
     const std::string input = "1 / 1";
 
     const auto result = Lexer(input).lex();
@@ -82,7 +82,7 @@ TEST(ScannerTest, HandleBinarySlashOp) {
     ));
 }
 
-TEST(ScannerTest, HandleBrackets) {
+TEST(LexerTest, HandleBrackets) {
     const std::string input = "(1 + 1)";
 
     const auto result = Lexer(input).lex();
@@ -99,7 +99,7 @@ TEST(ScannerTest, HandleBrackets) {
     ));
 }
 
-TEST(ScannerTest, HandleNegatives) {
+TEST(LexerTest, HandleNegatives) {
     const std::string input = "-1 + 1";
 
     const auto result = Lexer(input).lex();
@@ -116,7 +116,7 @@ TEST(ScannerTest, HandleNegatives) {
     ));
 }
 
-TEST(ScannerTest, HandleExpression) {
+TEST(LexerTest, HandleExpression) {
     const std::string input = "1 + 2 * (3 + 4)";
 
     const auto result = Lexer(input).lex();
