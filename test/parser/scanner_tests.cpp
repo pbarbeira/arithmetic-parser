@@ -8,6 +8,9 @@
 #include "../../src/parser/Lexer.h"
 #include <algorithm>
 
+std::vector<std::string> getValues(const std::vector<std::unique_ptr<Token>>& tokens);
+std::vector<TokenType> getTypes(const std::vector<std::unique_ptr<Token>>& tokens);
+
 TEST(LexerTest, HandleEmptyStream) {
     const std::string input;
     const auto result = Lexer(input).lex();
@@ -20,12 +23,10 @@ TEST(LexerTest, HandleBinaryPlusOp) {
     const auto result = Lexer(input).lex();
     EXPECT_EQ(3, result.size());
     
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("1", "+", "1"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             NUMBER, PLUS, NUMBER
     ));
@@ -37,12 +38,10 @@ TEST(LexerTest, HandleBinaryMinusOp) {
     const auto result = Lexer(input).lex();
     EXPECT_EQ(3, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("1", "-", "1"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             NUMBER, MINUS, NUMBER
     ));
@@ -54,12 +53,10 @@ TEST(LexerTest, HandleBinaryStarOp) {
     const auto result = Lexer(input).lex();
     EXPECT_EQ(3, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    const auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("1", "*", "1"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             NUMBER, STAR, NUMBER
     ));
@@ -71,12 +68,10 @@ TEST(LexerTest, HandleBinarySlashOp) {
     const auto result = Lexer(input).lex();
     EXPECT_EQ(3, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    const auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("1", "/", "1"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             NUMBER, SLASH, NUMBER
     ));
@@ -86,14 +81,12 @@ TEST(LexerTest, HandleBrackets) {
     const std::string input = "(1 + 1)";
 
     const auto result = Lexer(input).lex();
-    EXPECT_EQ(3, result.size());
+    EXPECT_EQ(5, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    const auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("(", "1", "+", "1", ")"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             LEFT_BRACKET, NUMBER, PLUS, NUMBER, RIGHT_BRACKET
     ));
@@ -103,14 +96,12 @@ TEST(LexerTest, HandleNegatives) {
     const std::string input = "-1 + 1";
 
     const auto result = Lexer(input).lex();
-    EXPECT_EQ(3, result.size());
+    EXPECT_EQ(4, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
+    const auto resultValues = getValues(result);
     ASSERT_THAT(resultValues, testing::ElementsAre("-", "1", "+", "1"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             MINUS, NUMBER, PLUS, NUMBER
     ));
@@ -122,14 +113,30 @@ TEST(LexerTest, HandleExpression) {
     const auto result = Lexer(input).lex();
     EXPECT_EQ(9, result.size());
 
-    const auto resultValues = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.value; });
-    ASSERT_THAT(resultValues, testing::ElementsAre("1", "+", "2", "*", "(", "3", " +", "4", ")"));
+    const auto resultValues = getValues(result);
+    ASSERT_THAT(resultValues, testing::ElementsAre("1", "+", "2", "*", "(", "3", "+", "4", ")"));
 
-    const auto resultTypes = std::transform(result.begin(), result.end(), result.begin(),
-        [](const Token& t) { return t.type; });
+    const auto resultTypes = getTypes(result);
     ASSERT_THAT(resultTypes, testing::ElementsAre(
             NUMBER, PLUS, NUMBER, STAR, LEFT_BRACKET, NUMBER, PLUS, NUMBER, RIGHT_BRACKET
     ));
+}
+
+std::vector<std::string> getValues(const std::vector<std::unique_ptr<Token>>& tokens) {
+    std::vector<std::string> values(tokens.size());
+    std::transform(tokens.begin(), tokens.end(), values.begin(),
+        [](const std::unique_ptr<Token>& token) {
+        return token->value;
+        });
+    return values;
+}
+
+std::vector<TokenType> getTypes(const std::vector<std::unique_ptr<Token>>& tokens) {
+    std::vector<TokenType> values(tokens.size());
+    std::transform(tokens.begin(), tokens.end(), values.begin(),
+        [](const std::unique_ptr<Token>& token) {
+            return token->type;
+        });
+    return values;
 }
 
