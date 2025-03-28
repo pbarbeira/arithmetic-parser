@@ -6,6 +6,7 @@
 #define SCANNER_H
 
 #include <vector>
+#include "Token.h"
 
 class Lexer {
     int _start{};
@@ -18,8 +19,8 @@ class Lexer {
         explicit Lexer(const std::string& input):
             _input(input){}
 
-        std::vector<std::string> lex() {
-            std::vector<std::string> tokens;
+        std::vector<Token> lex() {
+            std::vector<Token> tokens;
 
             return tokens;
         }
