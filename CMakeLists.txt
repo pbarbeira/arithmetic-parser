@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(run_tests
         test/test_main.cpp
-        test/parser/scanner_tests.cpp
+        test/parser/lexer_tests.cpp
         test/parser/parser_tests.cpp
         test/visitor/solver_tests.cpp
 )
@@ -33,5 +33,6 @@ add_executable(arithmetic_parser
         src/parser/Parser.h
         src/parser/Lexer.h
         src/parser/Token.h
+        src/parser/Expr.h
         src/visitor/Solver.h
 )

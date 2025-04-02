@@ -1,5 +1,3 @@
-#include <utility>
-
 //
 // Created by pbarbeira on 28-03-2025.
 //
@@ -10,7 +8,7 @@
 enum TokenType {
     PLUS, MINUS, STAR, SLASH,
     LEFT_BRACKET, RIGHT_BRACKET,
-    NUMBER,
+    NUMBER, END
 };
 
 struct Token {
